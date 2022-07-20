@@ -20,3 +20,10 @@ func GetAllUsers() ([]models.User, error) {
 	return all_users, err
 
 }
+
+func GetAUsers(id int) ([]models.User, error) {
+	var user []models.User
+	err := db.Where("id = ?", id).Find(&user).Error
+	fmt.Println("user",user)
+	return user, err
+}
