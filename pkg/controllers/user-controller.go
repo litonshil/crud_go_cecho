@@ -44,6 +44,22 @@ func GetAUsers(c echo.Context) error {
 	return c.JSON(http.StatusOK, res)
 }
 
+func checkEmptyUserField(user *models.User,old_user *models.User) *models.User {
+	if (user.Name == "") {
+		user.Name = old_user.Name
+	}
+	if user.Address == "" {
+		user.Address = old_user.Address
+	}
+	if user.Email == "" {
+		user.Email = old_user.Email
+	}
+	if user.Type == "" {
+		user.Type = old_user.Type
+	}
+	return user
+}
+
 func UpdateUser(c echo.Context) error {
 
 	var user = new(models.User)
@@ -65,15 +81,10 @@ func UpdateUser(c echo.Context) error {
 	}
 
 	user.Id = user_id
-	if (user.Name == "") {
-		user.Name = old_user.Name
-	}
-	if user.Address == "" {
-		user.Address = old_user.Address
 
-	}
+	checkedUser := checkEmptyUserField(user,old_user)
 
-	res, err := repository.UpdateUser(user_id, user)
+	res, err := repository.UpdateUser(user_id, checkedUser)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
