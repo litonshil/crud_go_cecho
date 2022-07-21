@@ -5,10 +5,11 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/litonshil/crud_go_echo/pkg/models"
 )
 
 var (
-	db * gorm.DB
+	db *gorm.DB
 )
 
 func Connect() {
@@ -21,9 +22,15 @@ func Connect() {
 	db = d
 }
 
+func Migration() {
+	db.AutoMigrate(&models.User{})
+
+}
+
 func GetDB() *gorm.DB {
 	if db == nil {
 		Connect()
+		Migration()
 	}
 
 	return db

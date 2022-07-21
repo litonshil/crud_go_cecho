@@ -11,5 +11,6 @@ func User(e *echo.Echo) {
 	sub.GET("/users", controllers.GetAllUsers)
 	sub.GET("/search/:id", controllers.GetAUsers)
 	sub.PUT("/update/:id", controllers.UpdateUser)
+	sub.DELETE("/delete/:id", controllers.DeleteUser)
 
 }

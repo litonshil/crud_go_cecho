@@ -79,3 +79,13 @@ func UpdateUser(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, res)
 }
+
+func DeleteUser(c echo.Context) error {
+	id := c.Param("id")
+	user_id, _ := strconv.Atoi(id)
+	err := repository.DeleteUser(user_id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, "user deleted successfully")
+}
