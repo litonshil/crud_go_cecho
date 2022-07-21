@@ -24,6 +24,25 @@ func GetAllUsers() ([]models.User, error) {
 func GetAUsers(id int) ([]models.User, error) {
 	var user []models.User
 	err := db.Where("id = ?", id).Find(&user).Error
-	fmt.Println("user",user)
+	fmt.Println("user", user)
+	return user, err
+}
+
+// func UpdateUser(user *model.User) error {
+// 	err := db.Save(&user).Error
+// 	return err
+// }
+
+func UpdateUser(id int, user *models.User) (*models.User, error) {
+	// var oldUser models.User
+	// old_err := db.Model(&oldUser).Where("id = ?", id).Find(&oldUser).Error
+	// if old_err != nil {
+	// 	return user,old_err
+	// }
+	// user.Address = oldUser.Address
+	// user.Name = oldUser.Name
+
+	err := db.Model(&user).Where("id = ?", id).Update(&user).Error
+	fmt.Println("user", user)
 	return user, err
 }

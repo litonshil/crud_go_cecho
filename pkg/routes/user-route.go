@@ -9,6 +9,7 @@ func User(e *echo.Echo) {
 	sub := e.Group("/user")
 	sub.POST("/registration", controllers.Registration)
 	sub.GET("/users", controllers.GetAllUsers)
-	sub.GET("/user/:id", controllers.GetAUsers)
+	sub.GET("/search/:id", controllers.GetAUsers)
+	sub.PUT("/update/:id", controllers.UpdateUser)
 
 }
