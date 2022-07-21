@@ -34,6 +34,11 @@ func Registration(c echo.Context) error {
 	return c.JSON(http.StatusCreated, "user created successfullys")
 }
 
+// Login login user
+func Login(c echo.Context) error {
+
+}
+
 // GetAllUsers fetch all user 
 func GetAllUsers(c echo.Context) error {
 
@@ -88,7 +93,6 @@ func UpdateUser(c echo.Context) error {
 	id := c.Param("id")
 
 	user_id, _ := strconv.Atoi(id)
-
 	old_err := db.Model(old_user).Where("id = ?", id).Find(&old_user).Error
 
 	if old_err != nil {
