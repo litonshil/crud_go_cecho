@@ -57,6 +57,9 @@ func checkEmptyUserField(user *models.User,old_user *models.User) *models.User {
 	if user.Type == "" {
 		user.Type = old_user.Type
 	}
+	if user.Password == "" {
+		user.Password = old_user.Password
+	}
 	return user
 }
 
