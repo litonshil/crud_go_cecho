@@ -10,8 +10,8 @@ func User(e *echo.Echo) {
 	sub.POST("/registration", controllers.Registration)
 	sub.POST("/login", controllers.Login)
 	sub.GET("/users", controllers.GetAllUsers)
-	sub.GET("/search/:id", controllers.GetAUsers)
-	sub.PUT("/update/:id", controllers.UpdateUser)
-	sub.DELETE("/delete/:id", controllers.DeleteUser)
+	sub.GET("/:id", controllers.GetAUsers)
+	sub.PUT("/:id", controllers.UpdateUser)
+	sub.DELETE("/:id", controllers.DeleteUser)
 
 }
