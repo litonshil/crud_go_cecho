@@ -6,9 +6,9 @@ import (
 
 type User struct {
 	Id       	int			`gorm:"primary_key;AUTO_INCREMENT"`
-	Email		string		`json:"email"`
-	Name     	string      `json:"name"`
+	Email		string		`json:"email" validate:"required,email"`
+	Name     	string      `json:"name" validate:"required,min=2,max=15"`
 	Address		string		`json:"address"`
-	Type		string		`json:"type"`	
-	Password  string		`json:"password"`
+	Type		string		`json:"type" validate:"required"`	
+	Password  string		`json:"password" validate:"required"`
 }
