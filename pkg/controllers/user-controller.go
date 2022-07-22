@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
-	"github.com/litonshil/crud_go_echo/pkg/const"
+	consts "github.com/litonshil/crud_go_echo/pkg/const"
 	"github.com/litonshil/crud_go_echo/pkg/database"
 	"github.com/litonshil/crud_go_echo/pkg/models"
 	"github.com/litonshil/crud_go_echo/pkg/repository"
@@ -36,7 +36,7 @@ func Registration(c echo.Context) error {
 	split_token := strings.Split(auth_token, "Bearer ")
 	fmt.Println(split_token)
 	claims, err := utils.DecodeToken(split_token[1])
-	fmt.Println("extracted token\n",claims)
+	fmt.Println("extracted token\n", claims)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, consts.UnAuthorized)
 	}
@@ -86,6 +86,13 @@ func Login(c echo.Context) error {
 // GetAllUsers fetch all user
 func GetAllUsers(c echo.Context) error {
 
+	auth_token := c.Request().Header.Get("Authorization")
+	split_token := strings.Split(auth_token, "Bearer ")
+	_, err := utils.DecodeToken(split_token[1])
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, consts.UnAuthorized)
+	}
+
 	res, err := repository.GetAllUsers()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
@@ -95,6 +102,14 @@ func GetAllUsers(c echo.Context) error {
 
 // GetAUsers fetch an specific user based on id
 func GetAUsers(c echo.Context) error {
+
+	auth_token := c.Request().Header.Get("Authorization")
+	split_token := strings.Split(auth_token, "Bearer ")
+	_, err := utils.DecodeToken(split_token[1])
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, consts.UnAuthorized)
+	}
+
 	id := c.Param("id")
 	user_id, _ := strconv.Atoi(id)
 	res, err := repository.GetAUsers(user_id)
@@ -127,6 +142,13 @@ func checkEmptyUserField(user *models.User, old_user *models.User) *models.User 
 // UpdateUser update an user
 func UpdateUser(c echo.Context) error {
 
+	auth_token := c.Request().Header.Get("Authorization")
+	split_token := strings.Split(auth_token, "Bearer ")
+	_, err := utils.DecodeToken(split_token[1])
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, consts.UnAuthorized)
+	}
+
 	var user = new(models.User)
 	var old_user = new(models.User)
 
@@ -156,11 +178,19 @@ func UpdateUser(c echo.Context) error {
 
 // DeleteUser delete an user
 func DeleteUser(c echo.Context) error {
+
+	auth_token := c.Request().Header.Get("Authorization")
+	split_token := strings.Split(auth_token, "Bearer ")
+	_, err := utils.DecodeToken(split_token[1])
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, consts.UnAuthorized)
+	}
+
 	id := c.Param("id")
 	user_id, _ := strconv.Atoi(id)
-	err := repository.DeleteUser(user_id)
+	err_delete := repository.DeleteUser(user_id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusInternalServerError, err_delete.Error())
 	}
 	return c.JSON(http.StatusOK, "user deleted successfully")
 }
