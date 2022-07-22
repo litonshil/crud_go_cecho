@@ -1,18 +1,23 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"github.com/litonshil/crud_go_echo/pkg/const"
 	"github.com/litonshil/crud_go_echo/pkg/database"
 	"github.com/litonshil/crud_go_echo/pkg/models"
 	"github.com/litonshil/crud_go_echo/pkg/repository"
+	"github.com/litonshil/crud_go_echo/pkg/token"
+	"github.com/litonshil/crud_go_echo/pkg/types"
 	"github.com/litonshil/crud_go_echo/pkg/utils"
 )
 
 var db = database.GetDB()
-
+var validate = validator.New()
 
 // Registration create a user
 func Registration(c echo.Context) error {
@@ -20,6 +25,10 @@ func Registration(c echo.Context) error {
 
 	if err := c.Bind(user); err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	if validationerr := validate.Struct(user); validationerr != nil {
+		return c.JSON(http.StatusInternalServerError, validationerr.Error())
 	}
 
 	if err := repository.CreateUser(user); err != nil {
@@ -36,10 +45,35 @@ func Registration(c echo.Context) error {
 
 // Login login user
 func Login(c echo.Context) error {
+	var user = new(types.User)
+	var model_user = new(models.User)
+	var tokens = new(types.Token)
 
+	if err := c.Bind(user); err != nil {
+		return c.JSON(http.StatusBadRequest, consts.BadRequest)
+	}
+
+	if validationerr := validate.Struct(user); validationerr != nil {
+		fmt.Println("error")
+		return c.JSON(http.StatusInternalServerError, validationerr.Error())
+	}
+
+	model_user, err := repository.GetUserByEmail(user.Email)
+	if model_user.Email == "" || err != nil {
+		return c.JSON(http.StatusUnauthorized, consts.UnAuthorized)
+	}
+
+	token, refresh_token, err := token.GenerateUserTokens(model_user.Email, model_user.Id, model_user.Type)
+	tokens.User_Token = token
+	tokens.User_Refreshtoken = refresh_token
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, tokens)
 }
 
-// GetAllUsers fetch all user 
+// GetAllUsers fetch all user
 func GetAllUsers(c echo.Context) error {
 
 	res, err := repository.GetAllUsers()
