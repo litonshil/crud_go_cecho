@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -24,11 +25,20 @@ func Registration(c echo.Context) error {
 	var user = new(models.User)
 
 	if err := c.Bind(user); err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
+		return c.JSON(http.StatusBadRequest, consts.BadRequest)
 	}
 
 	if validationerr := validate.Struct(user); validationerr != nil {
 		return c.JSON(http.StatusInternalServerError, validationerr.Error())
+	}
+
+	auth_token := c.Request().Header.Get("Authorization")
+	split_token := strings.Split(auth_token, "Bearer ")
+	fmt.Println(split_token)
+	claims, err := utils.DecodeToken(split_token[1])
+	fmt.Println("extracted token\n",claims)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, consts.UnAuthorized)
 	}
 
 	if err := repository.CreateUser(user); err != nil {
